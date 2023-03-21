@@ -1,1 +1,24 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <span>Zarządzanie projektem</span>
+        <span class="example-fill-remaining-space"></span>
+        <span class="algin-center"></span>
+        <span class="example-spacer"></span>
+        <button mat-button>O nas</button>
+        <button mat-button>Kontakt</button>
+        <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+                <mat-icon>dialpad</mat-icon>
+                <span>uhhuhu</span>
+            </button>
+
+        </mat-menu>
+
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<div>
 <router-outlet></router-outlet>
+</div>

@@ -7,12 +7,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieService } from 'ngx-cookie-service';
 import { HomePageComponent } from './user/home-page/home-page.component';
 import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
+import { LoginComponent } from './shared/login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomePageComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
