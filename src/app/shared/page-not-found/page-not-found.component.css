@@ -207,6 +207,7 @@ li a:hover {
 
 .object_astronaut{
     animation: rotate-astronaut 200s infinite linear both alternate;
+    scale: 25%;
 }
 
 .box_astronaut{

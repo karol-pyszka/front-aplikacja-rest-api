@@ -1,24 +1,37 @@
-<mat-toolbar color="primary">
-    <mat-toolbar-row>
-        <span>Zarządzanie projektem</span>
-        <span class="example-fill-remaining-space"></span>
-        <span class="algin-center"></span>
-        <span class="example-spacer"></span>
-        <button mat-button>O nas</button>
-        <button mat-button>Kontakt</button>
-        <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item>
-                <mat-icon>dialpad</mat-icon>
-                <span>uhhuhu</span>
-            </button>
-
-        </mat-menu>
-
-    </mat-toolbar-row>
-</mat-toolbar>
-
-<div>
-<router-outlet></router-outlet>
+<body class="bg-purple">
+        
+<div class="custom-navbar">
+    <div class="brand-logo">
+        <span><a href="/home">Zarządzanie projektem</a></span>
+    </div>
+    <div class="navbar-links">
+        <ul>
+          <li><a href="/login" class="btn-request">Zaloguj</a></li>
+        </ul>
+    </div>
 </div>
+    <div class="stars">
+        <div class="central-body">
+            <mat-card>
+                <router-outlet></router-outlet>
+            </mat-card>
+            
+        </div>
+        <div class="objects">
+            <div class="earth-moon">
+                <img class="object_earth" src="http://salehriaz.com/404Page/img/earth.svg" width="100px">
+                <img class="object_moon" src="http://salehriaz.com/404Page/img/moon.svg" width="80px">
+            </div>
+        </div>
+        <div class="glowing_stars">
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+
+        </div>
+
+    </div>
+
+</body>
