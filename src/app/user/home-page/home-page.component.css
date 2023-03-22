@@ -1,10 +1,10 @@
 table {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    min-width: 500px;
-  }
-  th.mat-header-cell {
-    text-align: left;
-    max-width: 300px;
-  }
+  width: auto;
+}
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  padding: 5px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  text-align: center;
+}
