@@ -39,4 +39,16 @@ export class HomePageComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  showTask() {
+
+  }
+
+  editProject() {
+
+  }
+
+  deleteProject() {
+    
+  }
+
 }
