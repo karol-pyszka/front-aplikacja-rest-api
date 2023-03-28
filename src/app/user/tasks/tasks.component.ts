@@ -1,10 +1,11 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
-import { Router } from '@angular/router';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
 
-export interface ProjectElement {
+
+export interface TasksForProject {
   position: number;
   name: string;
   description: string;
@@ -12,7 +13,7 @@ export interface ProjectElement {
   endTo: string;
 }
 
-const ELEMENT_DATA: ProjectElement[] = [
+const ELEMENT_DATA: TasksForProject[] = [
   {position: 1, name: 'Projekt testowy', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
   {position: 2, name: 'Projekt testowy2', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
   {position: 3, name: 'Projekt testowy3', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
@@ -22,13 +23,17 @@ const ELEMENT_DATA: ProjectElement[] = [
   {position: 7, name: 'Projekt testowy7', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
 ];
 
+
+
+
+
 @Component({
-  selector: 'app-home-page',
-  templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.css']
+  selector: 'app-tasks',
+  templateUrl: './tasks.component.html',
+  styleUrls: ['./tasks.component.css']
 })
-export class HomePageComponent implements OnInit {
-  
+export class TasksComponent implements OnInit {
+
   @ViewChild('deleteElementDialog')
   deleteElementDialog!: TemplateRef<any>;
 
@@ -38,9 +43,12 @@ export class HomePageComponent implements OnInit {
   @ViewChild('addElementDialog')
   addElementDialog!: TemplateRef<any>;
 
-  constructor(public dialog: MatDialog, private router: Router) { }
+  projectName: string | null | undefined;
+
+  constructor(public dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.projectName =  this.activeRoute.snapshot.paramMap.get('data');
   }
 
   // paginator var and event
@@ -61,11 +69,10 @@ export class HomePageComponent implements OnInit {
     this.pageIndex = e.pageIndex;
   }
 
-  
-  displayedColumns: string[] = ['position', 'name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'delete'];
+  displayedColumns: string[] = ['position', 'name', 'description', 'createdAt', 'endTo','edit', 'delete'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
-  selectedProjectName = ''
-  projectDetails!: ProjectElement;
+  selectedTaskName = ''
+  taskDetails!: TasksForProject;
 
 
   applyFilter(event: Event) {
@@ -73,29 +80,23 @@ export class HomePageComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  // normal should pass uid if is
-  showTask(element: any) {
-    //console.log(element)
-    //this.router.navigate(["tasks"], { state: { data: 'nazwa' } });
-    this.router.navigate(['tasks', {data: element.name}]);
-  }
-
-  editProject(data: any) {
-    this.projectDetails = data
+  editTask(data: any) {
+    this.taskDetails = data
     let dialogRef = this.dialog.open(this.editElementDialog);
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
       if (result !== undefined) {
           if (result === true) {
-            console.log(this.projectDetails)
+            console.log(this.taskDetails)
           }
       }
   })
   }
 
-  addNewProject(){
+
+  addNewTask(){
     let dialogRef = this.dialog.open(this.addElementDialog);
-    this.projectDetails = {
+    this.taskDetails = {
       position: 1,
       name: '',
       description: '',
@@ -105,14 +106,14 @@ export class HomePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
           if (result === true) {
-            console.log(this.projectDetails)
+            console.log(this.taskDetails)
           }
       }
   })
   }
 
-  deleteProject(data: any) {
-    this.selectedProjectName = data.name
+  deleteTask(data: any) {
+    this.selectedTaskName = data.name
     let dialogRef = this.dialog.open(this.deleteElementDialog);
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {

@@ -22,6 +22,8 @@ import {MatTableModule} from '@angular/material/table';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
+import { TasksComponent } from './user/tasks/tasks.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -29,7 +31,8 @@ import { CommonModule } from '@angular/common';
     AppComponent,
     HomePageComponent,
     PageNotFoundComponent,
-    LoginComponent
+    LoginComponent,
+    TasksComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +49,8 @@ import { CommonModule } from '@angular/common';
     MatDialogModule, 
     MatTableModule, 
     MatProgressSpinnerModule,
-    FormsModule
+    FormsModule,
+    MatPaginatorModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

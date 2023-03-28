@@ -1,0 +1,10 @@
+table {
+    width: auto;
+  }
+  
+  th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+    padding: 5px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    text-align: center;
+  }
