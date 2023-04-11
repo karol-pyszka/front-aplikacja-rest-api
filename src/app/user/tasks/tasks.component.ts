@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -43,12 +44,16 @@ export class TasksComponent implements OnInit {
   @ViewChild('addElementDialog')
   addElementDialog!: TemplateRef<any>;
 
+  @ViewChild(MatSort, { static: true })
+  sort: MatSort = new MatSort;
+
   projectName: string | null | undefined;
 
   constructor(public dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.projectName =  this.activeRoute.snapshot.paramMap.get('data');
+    this.dataSource.sort = this.sort;
   }
 
   // paginator var and event

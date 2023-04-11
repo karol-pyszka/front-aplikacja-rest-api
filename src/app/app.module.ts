@@ -24,6 +24,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { TasksComponent } from './user/tasks/tasks.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { AssignStudentsComponent } from './admin/assign-students/assign-students.component';
 
 
 @NgModule({
@@ -32,7 +34,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     HomePageComponent,
     PageNotFoundComponent,
     LoginComponent,
-    TasksComponent
+    TasksComponent,
+    AssignStudentsComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +53,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatTableModule, 
     MatProgressSpinnerModule,
     FormsModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

@@ -5,30 +5,29 @@ import {MatTableDataSource} from '@angular/material/table';
 import { Router } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 
-export interface ProjectElement {
+export interface StudentElement {
   position: number;
   name: string;
-  description: string;
-  createdAt: string;
-  endTo: string;
+  surname: string;
+  index: string;
 }
 
-const ELEMENT_DATA: ProjectElement[] = [
-  {position: 1, name: 'Projekt testowy', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 2, name: 'Projekt testowy2', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 3, name: 'Projekt testowy3', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 4, name: 'Projekt testowy4', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 5, name: 'Projekt testowy5', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 6, name: 'Projekt testowy6', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 7, name: 'Projekt testowy7', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
+const ELEMENT_DATA: StudentElement[] = [
+  {position: 1, name: 'Jan', surname: 'Niezbędny', index: '1234'},
+  {position: 2, name: 'Adam', surname: 'Zbędny', index: '5352'},
+  {position: 3, name: 'Krzysiu', surname: 'Andrut', index: '2322'},
+  {position: 4, name: 'Lorem', surname: 'xxxx', index: '7454'},
+  {position: 5, name: 'ipsum', surname: 'yyyy', index: '4256'},
+  {position: 6, name: 'set', surname: 'xsdf', index: '2355'},
+  {position: 7, name: 'dolorem', surname: 'sfsf', index: '9864'},
 ];
 
 @Component({
-  selector: 'app-home-page',
-  templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.css']
+  selector: 'app-assign-students',
+  templateUrl: './assign-students.component.html',
+  styleUrls: ['./assign-students.component.css']
 })
-export class HomePageComponent implements OnInit {
+export class AssignStudentsComponent implements OnInit {
   
   @ViewChild('deleteElementDialog')
   deleteElementDialog!: TemplateRef<any>;
@@ -66,10 +65,10 @@ export class HomePageComponent implements OnInit {
     this.pageIndex = e.pageIndex;
   }
   
-  displayedColumns: string[] = ['position', 'name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'delete'];
+  displayedColumns: string[] = ['position', 'name', 'surname', 'index', 'showTask','edit', 'delete'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   selectedProjectName = ''
-  projectDetails!: ProjectElement;
+  projectDetails!: StudentElement;
 
 
   applyFilter(event: Event) {
@@ -102,9 +101,8 @@ export class HomePageComponent implements OnInit {
     this.projectDetails = {
       position: 1,
       name: '',
-      description: '',
-      createdAt: '',
-      endTo: ''
+      surname: '',
+      index: '',
     }
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
