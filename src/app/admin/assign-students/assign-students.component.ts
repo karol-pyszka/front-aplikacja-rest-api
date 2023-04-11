@@ -148,8 +148,11 @@ export class AssignStudentsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(this.selectedProject)
-      console.log('The dialog was closed');
+      if (result !== undefined) {
+        if (result === true) {
+          console.log(this.selectedProject)
+        }
+    }
     });
   }
 
