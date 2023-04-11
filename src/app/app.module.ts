@@ -26,6 +26,8 @@ import { TasksComponent } from './user/tasks/tasks.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { AssignStudentsComponent } from './admin/assign-students/assign-students.component';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -54,7 +56,9 @@ import { AssignStudentsComponent } from './admin/assign-students/assign-students
     MatProgressSpinnerModule,
     FormsModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

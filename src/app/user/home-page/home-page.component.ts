@@ -23,6 +23,8 @@ const ELEMENT_DATA: ProjectElement[] = [
   {position: 7, name: 'Projekt testowy7', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
 ];
 
+export const PROJECTS_DATA: ProjectElement[] = ELEMENT_DATA
+
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',

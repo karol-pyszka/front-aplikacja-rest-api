@@ -1,9 +1,16 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import { Router } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ProjectElement, PROJECTS_DATA } from 'src/app/user/home-page/home-page.component';
 
 export interface StudentElement {
   position: number;
@@ -38,10 +45,17 @@ export class AssignStudentsComponent implements OnInit {
   @ViewChild('addElementDialog')
   addElementDialog!: TemplateRef<any>;
 
+  @ViewChild('selectProjectForStudent')
+  selectProjectForStudent!: TemplateRef<any>;
+
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort;
 
-  constructor(public dialog: MatDialog, private router: Router) { }
+  projects: ProjectElement[] = PROJECTS_DATA;
+
+  selectedProject: number = 0;
+
+  constructor(public dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
     this.dataSource.sort = this.sort;
@@ -125,6 +139,18 @@ export class AssignStudentsComponent implements OnInit {
           }
       }
   })
+  }
+
+  openSelectProject(element: any): void {
+    const dialogRef = this.dialog.open(this.selectProjectForStudent, {
+      width: '250px',
+      data: { projects: this.projects }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(this.selectedProject)
+      console.log('The dialog was closed');
+    });
   }
 
 }
