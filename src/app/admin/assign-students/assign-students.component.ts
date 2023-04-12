@@ -53,7 +53,7 @@ export class AssignStudentsComponent implements OnInit {
 
   projects: ProjectElement[] = PROJECTS_DATA;
 
-  selectedProject: number = 0;
+  selectedProjects: number[] = [];
 
   constructor(public dialog: MatDialog, private router: Router) {}
 
@@ -150,7 +150,7 @@ export class AssignStudentsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result === true) {
-          console.log(this.selectedProject)
+          console.log(this.selectedProjects)
         }
     }
     });

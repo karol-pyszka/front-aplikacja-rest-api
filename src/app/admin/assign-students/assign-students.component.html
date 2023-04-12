@@ -156,7 +156,7 @@
         <div>
         <mat-form-field>
           <mat-label>Nazwa projektu</mat-label>
-          <mat-select [(value)]="selectedProject">
+          <mat-select [(value)]="selectedProjects" multiple>
             <mat-option *ngFor="let project of projects" [value]="project.position">
               {{project.name}}
             </mat-option>
