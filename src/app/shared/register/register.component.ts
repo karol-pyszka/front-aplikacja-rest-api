@@ -4,20 +4,18 @@ import { Router } from '@angular/router';
 import { ApiService } from 'src/app/_api/api.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
-export class LoginComponent implements OnInit {
-
-  
+export class RegisterComponent implements OnInit {
 
   constructor(private router:Router, private api: ApiService) { }
 
   ngOnInit(): void {
   }
 
-  login(f: NgForm): void{
+  register(f: NgForm): void{
     const login = f.value.login.trim().replace(" ", "")
     const password = f.value.password.trim().replace(" ", "")
     console.log(login)
@@ -29,7 +27,4 @@ export class LoginComponent implements OnInit {
     this.router.navigate(["home"])
   }
 
-  register(){
-    this.router.navigate(["register"])
-  }
 }

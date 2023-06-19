@@ -10,7 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ProjectElement, PROJECTS_DATA } from 'src/app/user/home-page/home-page.component';
 
 export interface StudentElement {
   position: number;
@@ -51,7 +50,7 @@ export class AssignStudentsComponent implements OnInit {
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort;
 
-  projects: ProjectElement[] = PROJECTS_DATA;
+  projects: any = null;
 
   selectedProjects: number[] = [];
 

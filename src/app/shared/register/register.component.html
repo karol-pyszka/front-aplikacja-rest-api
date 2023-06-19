@@ -1,0 +1,34 @@
+<div class="padding-of-text">
+    <mat-card-title>Rejstracja</mat-card-title>
+    <mat-card-content>
+    <form #someForm="ngForm" (ngSubmit)="register(someForm)" class="example-form">
+        <div>
+            <mat-form-field class="example-full-width">
+                <mat-label>Imie</mat-label>
+                <input matInput placeholder="Podaj imie" name="name" ngModel required>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field class="example-full-width">
+                <mat-label>Nazwisko</mat-label>
+                <input matInput placeholder="Podaj nazwisko" name="surname" ngModel required>
+            </mat-form-field>
+        </div>
+    <div>
+        <mat-form-field class="example-full-width">
+            <mat-label>Login</mat-label>
+            <input matInput placeholder="Podaj login" name="login" ngModel required>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="example-full-width">
+            <mat-label>Hasło</mat-label>
+            <input type="password" matInput placeholder="Podaj hasło" ngModel name="password" required>
+        </mat-form-field>
+    </div>
+        <mat-card-actions>
+        <button mat-raised-button class="btn-request" [disabled]="!someForm.valid">Zaloguj</button>
+    </mat-card-actions>
+    </form>
+    </mat-card-content>
+    </div>

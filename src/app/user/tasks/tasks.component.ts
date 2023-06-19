@@ -4,6 +4,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ApiService } from 'src/app/_api/api.service';
+import { Zadanie } from 'src/app/_models/task';
 
 
 export interface TasksForProject {
@@ -13,20 +15,6 @@ export interface TasksForProject {
   createdAt: string;
   endTo: string;
 }
-
-const ELEMENT_DATA: TasksForProject[] = [
-  {position: 1, name: 'Projekt testowy', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 2, name: 'Projekt testowy2', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 3, name: 'Projekt testowy3', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 4, name: 'Projekt testowy4', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 5, name: 'Projekt testowy5', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 6, name: 'Projekt testowy6', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 7, name: 'Projekt testowy7', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-];
-
-
-
-
 
 @Component({
   selector: 'app-tasks',
@@ -48,11 +36,21 @@ export class TasksComponent implements OnInit {
   sort: MatSort = new MatSort;
 
   projectName: string | null | undefined;
+  projectId: string | null | undefined;
 
-  constructor(public dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute) { }
+  ELEMENT_DATA: TasksForProject[] = [];
+
+  constructor(public dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private api: ApiService) { }
 
   ngOnInit(): void {
     this.projectName =  this.activeRoute.snapshot.paramMap.get('data');
+    this.projectId =  this.activeRoute.snapshot.paramMap.get('id');
+    this.api.getTaskForProjects(this.projectId).subscribe(data => {
+      this.ELEMENT_DATA = data
+      console.log(this.ELEMENT_DATA)
+      this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
+    })
+    console.log(this.ELEMENT_DATA)
     this.dataSource.sort = this.sort;
   }
 
@@ -74,8 +72,8 @@ export class TasksComponent implements OnInit {
     this.pageIndex = e.pageIndex;
   }
 
-  displayedColumns: string[] = ['position', 'name', 'description', 'createdAt', 'endTo','edit', 'delete'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  displayedColumns: string[] = ['name', 'description', 'createdAt', 'endTo','edit', 'delete'];
+  dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   selectedTaskName = ''
   taskDetails!: TasksForProject;
 
@@ -111,21 +109,34 @@ export class TasksComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
           if (result === true) {
-            console.log(this.taskDetails)
+            let zad: Zadanie = {
+              nazwa: this.taskDetails.name,
+              opis: this.taskDetails.description
+            }
+            this.api.addTaskForProjects(this.projectId,zad).subscribe(data =>{
+              this.api.getTaskForProjects(this.projectId).subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
+              })
+            })
           }
       }
   })
   }
 
   deleteTask(data: any) {
-    this.selectedTaskName = data.name
+    this.selectedTaskName = data.nazwa
     let dialogRef = this.dialog.open(this.deleteElementDialog);
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-          if (result === 'yes') {
-              console.log('User clicked yes.');
-          } else if (result === 'no') {
-              console.log('User clicked no.');
+        if (result === true) {
+            this.api.deleteTask(data.id).subscribe(data => {
+              this.api.getTaskForProjects(this.projectId).subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
+              })
+            })
+            
           }
       }
   })

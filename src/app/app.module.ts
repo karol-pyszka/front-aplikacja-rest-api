@@ -28,6 +28,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { AssignStudentsComponent } from './admin/assign-students/assign-students.component';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { HttpClientModule } from '@angular/common/http';
+import { RegisterComponent } from './shared/register/register.component';
 
 
 @NgModule({
@@ -37,7 +39,8 @@ import { MatSelectModule } from '@angular/material/select';
     PageNotFoundComponent,
     LoginComponent,
     TasksComponent,
-    AssignStudentsComponent
+    AssignStudentsComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -58,7 +61,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatPaginatorModule,
     MatSortModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
+    HttpClientModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

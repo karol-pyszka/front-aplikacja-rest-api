@@ -4,6 +4,8 @@ import { PageEvent } from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import { Router } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
+import { ApiService } from 'src/app/_api/api.service';
+import { Projekt } from 'src/app/_models/project';
 
 export interface ProjectElement {
   position: number;
@@ -12,18 +14,6 @@ export interface ProjectElement {
   createdAt: string;
   endTo: string;
 }
-
-const ELEMENT_DATA: ProjectElement[] = [
-  {position: 1, name: 'Projekt testowy', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 2, name: 'Projekt testowy2', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 3, name: 'Projekt testowy3', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 4, name: 'Projekt testowy4', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 5, name: 'Projekt testowy5', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 6, name: 'Projekt testowy6', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-  {position: 7, name: 'Projekt testowy7', description: 'opis projektu', createdAt: '2020-04-25', endTo: '2020-04-26' },
-];
-
-export const PROJECTS_DATA: ProjectElement[] = ELEMENT_DATA
 
 @Component({
   selector: 'app-home-page',
@@ -41,18 +31,38 @@ export class HomePageComponent implements OnInit {
   @ViewChild('addElementDialog')
   addElementDialog!: TemplateRef<any>;
 
+  @ViewChild('assignDialog')
+  assignDialog!: TemplateRef<any>;
+
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort;
 
-  constructor(public dialog: MatDialog, private router: Router) { }
+  ELEMENT_DATA: Projekt[] = []
+
+  constructor(public dialog: MatDialog, private router: Router, private api: ApiService) { }
 
   ngOnInit(): void {
+    this.api.getProjects().subscribe(data => {
+      this.ELEMENT_DATA = data
+      console.log(this.ELEMENT_DATA)
+      this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
+      this.length = this.ELEMENT_DATA.length
+    })
     this.dataSource.sort = this.sort;
   }
 
+sliceIntoChunks(arr: any, chunkSize:any) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+}
+
   // paginator var and event
   length = 50;
-  pageSize = 10;
+  pageSize = 5;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25];
 
@@ -66,12 +76,14 @@ export class HomePageComponent implements OnInit {
     this.length = e.length;
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
+    this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, e.pageSize)[e.pageIndex]);
   }
   
-  displayedColumns: string[] = ['position', 'name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'delete'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  displayedColumns: string[] = ['name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'delete', 'assign'];
+  dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   selectedProjectName = ''
-  projectDetails!: ProjectElement;
+  projectDetails2!: Projekt;
+  projectDetails!:ProjectElement;
 
 
   applyFilter(event: Event) {
@@ -83,20 +95,32 @@ export class HomePageComponent implements OnInit {
   showTask(element: any) {
     //console.log(element)
     //this.router.navigate(["tasks"], { state: { data: 'nazwa' } });
-    this.router.navigate(['tasks', {data: element.name}]);
+    this.router.navigate(['tasks', {data: element.nazwa, id:element.id}]);
   }
 
   editProject(data: any) {
-    this.projectDetails = data
+    this.projectDetails2 = data
+    console.log(data)
     let dialogRef = this.dialog.open(this.editElementDialog);
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
       if (result !== undefined) {
           if (result === true) {
-            console.log(this.projectDetails)
-          }
+            let proj: Projekt = {
+              nazwa: this.projectDetails2.nazwa,
+              opis: this.projectDetails2.opis
+            }
+            console.log(proj)
+            console.log(data.id)
+            this.api.editProject(data.id, proj).subscribe(data =>{
+              this.api.getProjects().subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
+                this.length = this.ELEMENT_DATA.length
+              })
+            })
+            
       }
-  })
+  }})
   }
 
   addNewProject(){
@@ -111,21 +135,54 @@ export class HomePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
           if (result === true) {
-            console.log(this.projectDetails)
+            let proj: Projekt = {
+              nazwa: this.projectDetails.name,
+              opis: this.projectDetails.description
+            }
+            this.api.addProject(proj).subscribe(data =>{
+              this.api.getProjects().subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
+                this.length = this.ELEMENT_DATA.length
+              })
+            })
+            
+      }
+  }})}
+
+  deleteProject(data: any) {
+    this.selectedProjectName = data.nazwa
+    let dialogRef = this.dialog.open(this.deleteElementDialog);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        if (result === true) {
+            this.api.deleteProject(data.id).subscribe(data => {
+              this.api.getProjects().subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
+                this.length = this.ELEMENT_DATA.length
+              })
+            })
+            
           }
       }
   })
   }
 
-  deleteProject(data: any) {
-    this.selectedProjectName = data.name
-    let dialogRef = this.dialog.open(this.deleteElementDialog);
+  assignProject(data: any){
+    this.selectedProjectName = data.nazwa
+    let dialogRef = this.dialog.open(this.assignDialog);
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-          if (result === 'yes') {
-              console.log('User clicked yes.');
-          } else if (result === 'no') {
-              console.log('User clicked no.');
+        if (result === true) {
+            //this.api.deleteProject(data.id).subscribe(data => {
+              this.api.getProjects().subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
+                this.length = this.ELEMENT_DATA.length
+              })
+           // })
+            
           }
       }
   })
