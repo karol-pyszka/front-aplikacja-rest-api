@@ -12,8 +12,6 @@ export interface TasksForProject {
   position: number;
   name: string;
   description: string;
-  createdAt: string;
-  endTo: string;
 }
 
 @Component({
@@ -65,7 +63,7 @@ export class TasksComponent implements OnInit {
 
   // paginator var and event
   length = 50;
-  pageSize = 10;
+  pageSize = 5;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25];
 
@@ -82,7 +80,7 @@ export class TasksComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, e.pageSize)[e.pageIndex]);
   }
 
-  displayedColumns: string[] = ['name', 'description', 'createdAt', 'endTo','edit', 'delete'];
+  displayedColumns: string[] = ['name', 'description','edit', 'delete'];
   dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   selectedTaskName = ''
   taskDetails!: TasksForProject;
@@ -112,9 +110,7 @@ export class TasksComponent implements OnInit {
     this.taskDetails = {
       position: 1,
       name: '',
-      description: '',
-      createdAt: '',
-      endTo: ''
+      description: ''
     }
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {

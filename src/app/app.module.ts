@@ -32,6 +32,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './shared/register/register.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { ChatComponent } from './user/chat/chat.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 
@@ -68,7 +70,9 @@ import { ChatComponent } from './user/chat/chat.component';
     MatSelectModule,
     HttpClientModule,
     ReactiveFormsModule,
-    MatDividerModule
+    MatDividerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

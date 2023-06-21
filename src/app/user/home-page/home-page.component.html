@@ -34,12 +34,12 @@
         <!-- Symbol Column -->
         <ng-container matColumnDef="createdAt">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Data utworzenia </th>
-          <td mat-cell *matCellDef="let element"> {{element.createdAt}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.dataCzasUtworzenia | date :'short'}} </td>
         </ng-container>
       
         <ng-container matColumnDef="endTo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Przewidywana data zakończenia </th>
-          <td mat-cell *matCellDef="let element"> {{element.endTo}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.data_oddania | date :'short'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="showTask">
@@ -96,27 +96,29 @@
     <div>
   <mat-form-field appearance="fill">
     <mat-label>Nazwa projektu</mat-label>
-    <input matInput [(ngModel)]="projectDetails2.nazwa" placeholder="projectDetails2.nazwa">
+    <input matInput [(ngModel)]="projectDetails.nazwa" placeholder="projectDetails.nazwa">
   </mat-form-field>
 </div>
 <div>
   <mat-form-field appearance="fill">
   <mat-label>Opis projektu</mat-label>
-  <textarea matInput [(ngModel)]="projectDetails2.opis" placeholder="projectDetails2.opis"></textarea>
-  </mat-form-field>
-</div>
-<!--<div>
-  <mat-form-field appearance="fill">
-  <mat-label>Data utworzenia</mat-label>
-  <input matInput [(ngModel)]="projectDetails.createdAt" placeholder="projectDetails.createdAt" disabled>
+  <textarea matInput [(ngModel)]="projectDetails.opis" placeholder="projectDetails.opis"></textarea>
   </mat-form-field>
 </div>
 <div>
   <mat-form-field appearance="fill">
-  <mat-label>Przewidywana data zakończenia</mat-label>
-  <input matInput [(ngModel)]="projectDetails.endTo" placeholder="projectDetails.endTo">
+  <mat-label>Data utworzenia</mat-label>
+  <input matInput [(ngModel)]="projectDetails.dataCzasUtworzenia" placeholder="projectDetails.dataCzasUtworzenia" disabled>
   </mat-form-field>
-</div>-->
+</div>
+<div>
+  <mat-form-field appearance="fill">
+    <mat-label>Data oddania projektu</mat-label>
+    <input matInput [matDatepicker]="datepicker" [(ngModel)]="projectDetails.data_oddania" placeholder="projectDetails.data_oddania">
+    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+    <mat-datepicker #datepicker></mat-datepicker>
+  </mat-form-field>
+</div>
   </div>
   <div mat-dialog-actions>
     <button mat-button mat-dialog-close>Anuluj</button>
@@ -131,25 +133,21 @@
         <div>
       <mat-form-field appearance="fill">
         <mat-label>Nazwa projektu</mat-label>
-        <input matInput [(ngModel)]="projectDetails.name">
+        <input matInput [(ngModel)]="projectDetails.nazwa">
       </mat-form-field>
     </div>
     <div>
       <mat-form-field appearance="fill">
       <mat-label>Opis projektu</mat-label>
-      <textarea matInput [(ngModel)]="projectDetails.description"></textarea>
+       <textarea matInput [(ngModel)]="projectDetails.opis"></textarea>
       </mat-form-field>
     </div>
     <div>
       <mat-form-field appearance="fill">
-      <mat-label>Data utworzenia</mat-label>
-      <input matInput [(ngModel)]="projectDetails.createdAt">
-      </mat-form-field>
-    </div>
-    <div>
-      <mat-form-field appearance="fill">
-      <mat-label>Przewidywana data zakończenia</mat-label>
-      <input matInput [(ngModel)]="projectDetails.endTo">
+        <mat-label>Data oddania projektu</mat-label>
+        <input matInput [matDatepicker]="datepicker" [(ngModel)]="projectDetails.data_oddania" placeholder="projectDetails.data_oddania">
+        <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+        <mat-datepicker #datepicker></mat-datepicker>
       </mat-form-field>
     </div>
       </div>

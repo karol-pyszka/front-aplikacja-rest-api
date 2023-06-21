@@ -6,14 +6,11 @@ import { Router } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 import { ApiService } from 'src/app/_api/api.service';
 import { Projekt } from 'src/app/_models/project';
+import { formatDate, registerLocaleData } from '@angular/common';
+import localePl from '@angular/common/locales/pl';
 
-export interface ProjectElement {
-  position: number;
-  name: string;
-  description: string;
-  createdAt: string;
-  endTo: string;
-}
+registerLocaleData(localePl);
+
 
 @Component({
   selector: 'app-home-page',
@@ -82,8 +79,7 @@ sliceIntoChunks(arr: any, chunkSize:any) {
   displayedColumns: string[] = ['name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'delete', 'assign'];
   dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   selectedProjectName = ''
-  projectDetails2!: Projekt;
-  projectDetails!:ProjectElement;
+  projectDetails!:Projekt;
 
 
   applyFilter(event: Event) {
@@ -99,15 +95,18 @@ sliceIntoChunks(arr: any, chunkSize:any) {
   }
 
   editProject(data: any) {
-    this.projectDetails2 = data
+    this.projectDetails = data
+
     console.log(data)
     let dialogRef = this.dialog.open(this.editElementDialog);
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
           if (result === true) {
             let proj: Projekt = {
-              nazwa: this.projectDetails2.nazwa,
-              opis: this.projectDetails2.opis
+              nazwa: this.projectDetails.nazwa,
+              opis: this.projectDetails.opis,
+              dataCzasUtworzenia: data.dataCzasUtworzenia,
+              data_oddania: formatDate(this.projectDetails.data_oddania!, 'yyyy-MM-dd', 'pl')
             }
             console.log(proj)
             console.log(data.id)
@@ -126,19 +125,23 @@ sliceIntoChunks(arr: any, chunkSize:any) {
   addNewProject(){
     let dialogRef = this.dialog.open(this.addElementDialog);
     this.projectDetails = {
-      position: 1,
-      name: '',
-      description: '',
-      createdAt: '',
-      endTo: ''
+      nazwa: '',
+      opis: '',
+      dataCzasUtworzenia:'',
+      data_oddania: ''
     }
+    const dataCzasUtworzenia: Date = new Date();
+    const formattedDataCzasUtworzenia: string = formatDate(dataCzasUtworzenia, 'yyyy-MM-dd HH:mm:ss.SSS', 'pl');
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
           if (result === true) {
             let proj: Projekt = {
-              nazwa: this.projectDetails.name,
-              opis: this.projectDetails.description
+              nazwa: this.projectDetails.nazwa,
+              opis: this.projectDetails.opis,
+              dataCzasUtworzenia: formattedDataCzasUtworzenia,
+              data_oddania: formatDate(this.projectDetails.data_oddania!, 'yyyy-MM-dd', 'pl')
             }
+            console.log(proj)
             this.api.addProject(proj).subscribe(data =>{
               this.api.getProjects().subscribe(data => {
                 this.ELEMENT_DATA = data
