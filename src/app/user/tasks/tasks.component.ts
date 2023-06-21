@@ -48,11 +48,20 @@ export class TasksComponent implements OnInit {
     this.api.getTaskForProjects(this.projectId).subscribe(data => {
       this.ELEMENT_DATA = data
       console.log(this.ELEMENT_DATA)
-      this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
+      this.dataSource = this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
+      this.length = this.ELEMENT_DATA.length //new MatTableDataSource(this.ELEMENT_DATA);
     })
     console.log(this.ELEMENT_DATA)
     this.dataSource.sort = this.sort;
   }
+  sliceIntoChunks(arr: any, chunkSize:any) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+}
 
   // paginator var and event
   length = 50;
@@ -70,6 +79,7 @@ export class TasksComponent implements OnInit {
     this.length = e.length;
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
+    this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, e.pageSize)[e.pageIndex]);
   }
 
   displayedColumns: string[] = ['name', 'description', 'createdAt', 'endTo','edit', 'delete'];
@@ -116,7 +126,8 @@ export class TasksComponent implements OnInit {
             this.api.addTaskForProjects(this.projectId,zad).subscribe(data =>{
               this.api.getTaskForProjects(this.projectId).subscribe(data => {
                 this.ELEMENT_DATA = data
-                this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
+                this.length = this.ELEMENT_DATA.length
               })
             })
           }
@@ -133,7 +144,8 @@ export class TasksComponent implements OnInit {
             this.api.deleteTask(data.id).subscribe(data => {
               this.api.getTaskForProjects(this.projectId).subscribe(data => {
                 this.ELEMENT_DATA = data
-                this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
+                this.length = this.ELEMENT_DATA.length
               })
             })
             
