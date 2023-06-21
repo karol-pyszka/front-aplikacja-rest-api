@@ -8,7 +8,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { HomePageComponent } from './user/home-page/home-page.component';
 import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
 import { LoginComponent } from './shared/login/login.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 // Angular Material imports
 import {MatCardModule} from '@angular/material/card';
@@ -30,6 +30,9 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './shared/register/register.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { ChatComponent } from './user/chat/chat.component';
+
 
 
 @NgModule({
@@ -40,7 +43,8 @@ import { RegisterComponent } from './shared/register/register.component';
     LoginComponent,
     TasksComponent,
     AssignStudentsComponent,
-    RegisterComponent
+    RegisterComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +66,9 @@ import { RegisterComponent } from './shared/register/register.component';
     MatSortModule,
     MatOptionModule,
     MatSelectModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatDividerModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

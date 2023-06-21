@@ -6,6 +6,7 @@ import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.co
 import { HomePageComponent } from './user/home-page/home-page.component';
 import { TasksComponent } from './user/tasks/tasks.component';
 import { RegisterComponent } from './shared/register/register.component';
+import { ChatComponent } from './user/chat/chat.component';
 
 const routes: Routes = [
   { path: 'home', component: HomePageComponent},
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'tasks', component: TasksComponent},
   { path: 'assign', component: AssignStudentsComponent},
   { path: 'register', component: RegisterComponent },
+  { path: 'chat', component: ChatComponent },
   { path: '',   redirectTo: '/login', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent }
 

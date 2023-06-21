@@ -1,0 +1,32 @@
+#history {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+    width: 400px;
+    height: 500px;
+    overflow-y: scroll;
+  }
+  
+  #message {
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+  }
+  
+  .fw {
+    width: 100%
+  }
+  
+  .mb {
+    margin-bottom: 10px;
+  }
+  
+  .form-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .delete-all-icon {
+    margin-left: 10px;
+  }

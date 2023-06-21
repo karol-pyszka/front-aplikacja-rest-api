@@ -1,0 +1,29 @@
+<div id="history" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+    <div *ngFor="let chat of chats" class="mb">
+      <mat-card>
+        <mat-card-subtitle>
+          <span>{{chat.username}} (Wysłano: {{chat.timestamp | date:'short'}})</span>
+        </mat-card-subtitle>
+        <mat-card-content>
+          <p>{{chat.message}}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  
+  <div class="form-container">
+    <form id="message" [formGroup]="form" (ngSubmit)="onChatSubmit(form.value)">
+      <mat-form-field appearance="outline" class="fw">
+        <mat-label>Wpisz swoją wiadomość</mat-label>
+        <input matInput formControlName="message">
+        <button type="submit" matSuffix mat-icon-button aria-label="Submit">
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-form-field>
+    </form>
+  
+    <button mat-icon-button class="delete-all-icon" color="warn" (click)="deleteAllChats()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  
