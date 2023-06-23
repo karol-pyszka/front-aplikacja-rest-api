@@ -34,6 +34,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ChatComponent } from './user/chat/chat.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -73,6 +74,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatDividerModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    ToastrModule.forRoot(),
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

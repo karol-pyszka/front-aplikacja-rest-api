@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Projekt } from '../_models/project';
 import { Zadanie } from '../_models/task';
+import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -11,52 +12,65 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  loginUser(login: string, password: string){
+  getProjects(tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'});
+
+    return this.http.get<any>(environment.api + 'project', { headers })
+  }
+
+  deleteProject(id: any, tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    
+    return this.http.delete<any>(environment.api + 'project/' + id, { headers })
+  }
+
+  addProject(project: Projekt, tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    
+    return this.http.post<Projekt>(environment.api + 'project/admin', project, { headers })
+  }
+
+  editProject(projektId: any, project: Projekt, tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    
+    return this.http.put(environment.api + 'project/' + projektId, project, { headers })
+  }
+
+  getTaskForProjects(projectId: any, tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    
+    return this.http.get<any>(environment.api + 'project/' + projectId, { headers })
+  }
+
+  addTaskForProjects(projectId: any, zadanie: Zadanie, tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    
+    return this.http.post<Zadanie>(environment.api + 'project/' + projectId + '/task', zadanie, { headers })
+  }
+
+  deleteTask(taskId: any, tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    
+    return this.http.delete<any>(environment.api + 'zadanie/' + taskId, { headers })
+  }
+
+  registerUser(user: User){
+    return this.http.post<any>(environment.api + 'auth/register', user)
+  }
+
+  loginUser(email: any, password: any){
     var user = {
-      login: login,
+      email: email,
       password: password
     }
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'});
-  let options = { headers: headers };
-    this.http.post<any>(environment.api + 'login/', user, options).subscribe({
-      next: data => {
-          console.log(data)
-          return data
-      },
-      error: error => {
-          console.error('There was an error!', error);
-      }
-  })
-  }
-
-  getProjects(){
-    return this.http.get<any>(environment.api + 'projekt')
-  }
-
-  deleteProject(id: any){
-    return this.http.delete<any>(environment.api + 'projekt/' + id)
-  }
-
-  addProject(project: Projekt){
-    return this.http.post<Projekt>(environment.api + 'projekt', project)
-  }
-
-  editProject(projektId: any, project: Projekt){
-    return this.http.put(environment.api + 'projekt/' + projektId, project)
-  }
-
-  getTaskForProjects(projectId: any){
-    return this.http.get<any>(environment.api + 'projekt/' + projectId + '/zadanie')
-  }
-
-  addTaskForProjects(projectId: any, zadanie: Zadanie){
-    return this.http.post<Zadanie>(environment.api + 'projekt/' + projectId + '/zadanie', zadanie)
-  }
-
-  deleteTask(taskId: any){
-    return this.http.delete<any>(environment.api + 'zadanie/' + taskId)
+    return this.http.post<any>(environment.api + 'auth/authenticate', user)
   }
   
 }

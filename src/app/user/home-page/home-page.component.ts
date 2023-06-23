@@ -8,6 +8,7 @@ import { ApiService } from 'src/app/_api/api.service';
 import { Projekt } from 'src/app/_models/project';
 import { formatDate, registerLocaleData } from '@angular/common';
 import localePl from '@angular/common/locales/pl';
+import { CookieService } from 'ngx-cookie-service';
 
 registerLocaleData(localePl);
 
@@ -33,13 +34,15 @@ export class HomePageComponent implements OnInit {
 
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort;
+  token: string = ''
 
   ELEMENT_DATA: Projekt[] = []
 
-  constructor(public dialog: MatDialog, private router: Router, private api: ApiService) { }
+  constructor(public dialog: MatDialog, private router: Router, private api: ApiService, private cookieService: CookieService) { }
 
   ngOnInit(): void {
-    this.api.getProjects().subscribe(data => {
+    this.token = this.cookieService.get('userToken');
+    this.api.getProjects(this.token).subscribe(data => {
       this.ELEMENT_DATA = data
       console.log(this.ELEMENT_DATA)
       this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
@@ -103,15 +106,15 @@ sliceIntoChunks(arr: any, chunkSize:any) {
       if (result !== undefined) {
           if (result === true) {
             let proj: Projekt = {
-              nazwa: this.projectDetails.nazwa,
-              opis: this.projectDetails.opis,
-              dataCzasUtworzenia: data.dataCzasUtworzenia,
-              data_oddania: formatDate(this.projectDetails.data_oddania!, 'yyyy-MM-dd', 'pl')
+              name: this.projectDetails.name,
+              description: this.projectDetails.description,
+              dateTimeCreated: data.dateTimeCreated,
+              dateTimeHandOver: formatDate(this.projectDetails.dateTimeHandOver!, 'yyyy-MM-dd HH:mm:ss.SSS', 'pl')
             }
             console.log(proj)
             console.log(data.id)
-            this.api.editProject(data.id, proj).subscribe(data =>{
-              this.api.getProjects().subscribe(data => {
+            this.api.editProject(data.id, proj,this.token).subscribe(data =>{
+              this.api.getProjects(this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
                 this.length = this.ELEMENT_DATA.length
@@ -125,10 +128,10 @@ sliceIntoChunks(arr: any, chunkSize:any) {
   addNewProject(){
     let dialogRef = this.dialog.open(this.addElementDialog);
     this.projectDetails = {
-      nazwa: '',
-      opis: '',
-      dataCzasUtworzenia:'',
-      data_oddania: ''
+      name: '',
+      description: '',
+      dateTimeCreated:'',
+      dateTimeHandOver: ''
     }
     const dataCzasUtworzenia: Date = new Date();
     const formattedDataCzasUtworzenia: string = formatDate(dataCzasUtworzenia, 'yyyy-MM-dd HH:mm:ss.SSS', 'pl');
@@ -136,14 +139,14 @@ sliceIntoChunks(arr: any, chunkSize:any) {
       if (result !== undefined) {
           if (result === true) {
             let proj: Projekt = {
-              nazwa: this.projectDetails.nazwa,
-              opis: this.projectDetails.opis,
-              dataCzasUtworzenia: formattedDataCzasUtworzenia,
-              data_oddania: formatDate(this.projectDetails.data_oddania!, 'yyyy-MM-dd', 'pl')
+              name: this.projectDetails.name,
+              description: this.projectDetails.description,
+              dateTimeCreated: formattedDataCzasUtworzenia,
+              dateTimeHandOver: formatDate(this.projectDetails.dateTimeHandOver!, 'yyyy-MM-dd HH:mm:ss.SSS', 'pl')
             }
             console.log(proj)
-            this.api.addProject(proj).subscribe(data =>{
-              this.api.getProjects().subscribe(data => {
+            this.api.addProject(proj,this.token).subscribe(data =>{
+              this.api.getProjects(this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
                 this.length = this.ELEMENT_DATA.length
@@ -154,13 +157,13 @@ sliceIntoChunks(arr: any, chunkSize:any) {
   }})}
 
   deleteProject(data: any) {
-    this.selectedProjectName = data.nazwa
+    this.selectedProjectName = data.name
     let dialogRef = this.dialog.open(this.deleteElementDialog);
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result === true) {
-            this.api.deleteProject(data.id).subscribe(data => {
-              this.api.getProjects().subscribe(data => {
+            this.api.deleteProject(data.id,this.token).subscribe(data => {
+              this.api.getProjects(this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
                 this.length = this.ELEMENT_DATA.length
@@ -179,7 +182,7 @@ sliceIntoChunks(arr: any, chunkSize:any) {
       if (result !== undefined) {
         if (result === true) {
             //this.api.deleteProject(data.id).subscribe(data => {
-              this.api.getProjects().subscribe(data => {
+              this.api.getProjects(this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
                 this.length = this.ELEMENT_DATA.length

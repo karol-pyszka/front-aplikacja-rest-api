@@ -22,24 +22,24 @@
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Nazwa </th>
-          <td mat-cell *matCellDef="let element"> {{element.nazwa}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
         </ng-container>
       
         <!-- Weight Column -->
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Opis </th>
-          <td mat-cell *matCellDef="let element"> {{element.opis}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.description}} </td>
         </ng-container>
       
         <!-- Symbol Column -->
         <ng-container matColumnDef="createdAt">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Data utworzenia </th>
-          <td mat-cell *matCellDef="let element"> {{element.dataCzasUtworzenia | date :'short'}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.dateTimeCreated | date :'short'}} </td>
         </ng-container>
       
         <ng-container matColumnDef="endTo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Przewidywana data zakończenia </th>
-          <td mat-cell *matCellDef="let element"> {{element.data_oddania | date :'short'}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.dateTimeHandOver | date :'short'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="showTask">
@@ -96,25 +96,25 @@
     <div>
   <mat-form-field appearance="fill">
     <mat-label>Nazwa projektu</mat-label>
-    <input matInput [(ngModel)]="projectDetails.nazwa" placeholder="projectDetails.nazwa">
+    <input matInput [(ngModel)]="projectDetails.name" placeholder="projectDetails.name">
   </mat-form-field>
 </div>
 <div>
   <mat-form-field appearance="fill">
   <mat-label>Opis projektu</mat-label>
-  <textarea matInput [(ngModel)]="projectDetails.opis" placeholder="projectDetails.opis"></textarea>
+  <textarea matInput [(ngModel)]="projectDetails.description" placeholder="projectDetails.description"></textarea>
   </mat-form-field>
 </div>
 <div>
   <mat-form-field appearance="fill">
   <mat-label>Data utworzenia</mat-label>
-  <input matInput [(ngModel)]="projectDetails.dataCzasUtworzenia" placeholder="projectDetails.dataCzasUtworzenia" disabled>
+  <input matInput [(ngModel)]="projectDetails.dateTimeCreated" placeholder="projectDetails.dateTimeCreated" disabled>
   </mat-form-field>
 </div>
 <div>
   <mat-form-field appearance="fill">
     <mat-label>Data oddania projektu</mat-label>
-    <input matInput [matDatepicker]="datepicker" [(ngModel)]="projectDetails.data_oddania" placeholder="projectDetails.data_oddania">
+    <input matInput [matDatepicker]="datepicker" [(ngModel)]="projectDetails.dateTimeHandOver" placeholder="projectDetails.dateTimeHandOver">
     <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
     <mat-datepicker #datepicker></mat-datepicker>
   </mat-form-field>
@@ -133,19 +133,19 @@
         <div>
       <mat-form-field appearance="fill">
         <mat-label>Nazwa projektu</mat-label>
-        <input matInput [(ngModel)]="projectDetails.nazwa">
+        <input matInput [(ngModel)]="projectDetails.name">
       </mat-form-field>
     </div>
     <div>
       <mat-form-field appearance="fill">
       <mat-label>Opis projektu</mat-label>
-       <textarea matInput [(ngModel)]="projectDetails.opis"></textarea>
+       <textarea matInput [(ngModel)]="projectDetails.description"></textarea>
       </mat-form-field>
     </div>
     <div>
       <mat-form-field appearance="fill">
         <mat-label>Data oddania projektu</mat-label>
-        <input matInput [matDatepicker]="datepicker" [(ngModel)]="projectDetails.data_oddania" placeholder="projectDetails.data_oddania">
+        <input matInput [matDatepicker]="datepicker" [(ngModel)]="projectDetails.dateTimeHandOver">
         <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker></mat-datepicker>
       </mat-form-field>

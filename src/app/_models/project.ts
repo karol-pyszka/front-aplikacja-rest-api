@@ -1,6 +1,6 @@
 export class Projekt {
-    nazwa: string | undefined
-    opis: string | undefined
-    dataCzasUtworzenia: string | undefined
-    data_oddania: string | undefined
+    name: string | undefined
+    description: string | undefined
+    dateTimeCreated: string | undefined
+    dateTimeHandOver: string | undefined
 }
