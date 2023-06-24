@@ -14,7 +14,7 @@ export class ApiService {
 
   getProjects(tokenU: any){
     const token = tokenU;
-    const headers = new HttpHeaders({Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'});
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
 
     return this.http.get<any>(environment.api + 'project', { headers })
   }
@@ -44,7 +44,7 @@ export class ApiService {
     const token = tokenU;
     const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
     
-    return this.http.get<any>(environment.api + 'project/' + projectId, { headers })
+    return this.http.get<any>(environment.api + 'project/' + projectId + '/task', { headers })
   }
 
   addTaskForProjects(projectId: any, zadanie: Zadanie, tokenU: any){
@@ -54,11 +54,11 @@ export class ApiService {
     return this.http.post<Zadanie>(environment.api + 'project/' + projectId + '/task', zadanie, { headers })
   }
 
-  deleteTask(taskId: any, tokenU: any){
+  deleteTask(projectId: any, taskId: any, tokenU: any){
     const token = tokenU;
     const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
     
-    return this.http.delete<any>(environment.api + 'zadanie/' + taskId, { headers })
+    return this.http.delete<any>(environment.api + 'project/' + projectId + '/task/' + taskId, { headers })
   }
 
   registerUser(user: User){
@@ -72,5 +72,42 @@ export class ApiService {
     }
     return this.http.post<any>(environment.api + 'auth/authenticate', user)
   }
+
+  getAllUser(tokenU: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+
+    return this.http.get<any>(environment.api + 'project/appusers', { headers })
+  }
+
+  assignStudentsToProjectByAdmin(tokenU: any, projectId: any, userId: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    var content = "po co ja istnieje powiedz mi byczq"
+    return this.http.post<any>(environment.api + 'project/admin/'+ projectId + '/user/' + userId, content, { headers })
+  }
+
+  getProjectForUserById(tokenU: any, userId: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    return this.http.get<any>(environment.api + 'project/admin/user/'+ userId, { headers })
+  }
+
+  addUser(tokenU: any, data: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    return this.http.post<any>(environment.api + 'project/admin/user', data, { headers })
+  }
   
+  editUser(tokenU: any, userId: any, data: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    return this.http.put<any>(environment.api + 'project/admin/user/edit/' + userId, data, { headers })
+  }
+
+  deleteUser(tokenU: any, userId: any){
+    const token = tokenU;
+    const headers = new HttpHeaders({Authorization: `Bearer ${token}`});
+    return this.http.delete<any>(environment.api + 'project/admin/user/delete/' + userId, { headers })
+  }
 }
