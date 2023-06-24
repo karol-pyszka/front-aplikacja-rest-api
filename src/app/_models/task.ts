@@ -1,4 +1,6 @@
 export class Zadanie {
-    nazwa: string | undefined
-    opis: string | undefined
+    name: string | undefined
+    description: string | undefined
+    createdDate: string | undefined
+    endToDate: string | undefined
 }

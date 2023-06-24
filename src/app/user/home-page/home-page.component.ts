@@ -9,6 +9,9 @@ import { Projekt } from 'src/app/_models/project';
 import { formatDate, registerLocaleData } from '@angular/common';
 import localePl from '@angular/common/locales/pl';
 import { CookieService } from 'ngx-cookie-service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { finalize } from 'rxjs';
 
 registerLocaleData(localePl);
 
@@ -35,18 +38,37 @@ export class HomePageComponent implements OnInit {
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort;
   token: string = ''
+  userRole = ''
+  displayedColumns: string[] = ['name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'upload', 'download'];
 
   ELEMENT_DATA: Projekt[] = []
 
-  constructor(public dialog: MatDialog, private router: Router, private api: ApiService, private cookieService: CookieService) { }
+  constructor(public dialog: MatDialog, private router: Router, private api: ApiService, private cookieService: CookieService, 
+    private http: HttpClient, private toastrService: ToastrService) { }
 
   ngOnInit(): void {
     this.token = this.cookieService.get('userToken');
+    if(this.cookieService.check("userToken")){
+      let jwtData = this.cookieService.get("userToken").split('.')[1]
+      let decodedJwtJsonData = window.atob(jwtData)
+      let decodedJwtData = JSON.parse(decodedJwtJsonData)
+      this.userRole = decodedJwtData.role
+      if(this.userRole == 'ADMIN'){
+        this.displayedColumns = ['name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'delete', 'upload', 'download'];
+      }
+    }
     this.api.getProjects(this.token).subscribe(data => {
       this.ELEMENT_DATA = data
       console.log(this.ELEMENT_DATA)
       this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
-      this.length = this.ELEMENT_DATA.length
+      if(this.ELEMENT_DATA == null)
+      {
+        this.length = 0
+      }
+      else{
+        this.length = this.ELEMENT_DATA.length
+      }
+      
     })
     this.dataSource.sort = this.sort;
   }
@@ -78,8 +100,7 @@ sliceIntoChunks(arr: any, chunkSize:any) {
     this.pageIndex = e.pageIndex;
     this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, e.pageSize)[e.pageIndex]);
   }
-  
-  displayedColumns: string[] = ['name', 'description', 'createdAt', 'endTo', 'showTask','edit', 'delete', 'assign'];
+
   dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   selectedProjectName = ''
   projectDetails!:Projekt;
@@ -94,7 +115,7 @@ sliceIntoChunks(arr: any, chunkSize:any) {
   showTask(element: any) {
     //console.log(element)
     //this.router.navigate(["tasks"], { state: { data: 'nazwa' } });
-    this.router.navigate(['tasks', {data: element.nazwa, id:element.id}]);
+    this.router.navigate(['tasks', {data: element.name, id:element.id}]);
   }
 
   editProject(data: any) {
@@ -117,7 +138,13 @@ sliceIntoChunks(arr: any, chunkSize:any) {
               this.api.getProjects(this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
-                this.length = this.ELEMENT_DATA.length
+                if(this.ELEMENT_DATA == null)
+                {
+                  this.length = 0
+                }
+                else{
+                  this.length = this.ELEMENT_DATA.length
+                }
               })
             })
             
@@ -144,12 +171,17 @@ sliceIntoChunks(arr: any, chunkSize:any) {
               dateTimeCreated: formattedDataCzasUtworzenia,
               dateTimeHandOver: formatDate(this.projectDetails.dateTimeHandOver!, 'yyyy-MM-dd HH:mm:ss.SSS', 'pl')
             }
-            console.log(proj)
             this.api.addProject(proj,this.token).subscribe(data =>{
               this.api.getProjects(this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
-                this.length = this.ELEMENT_DATA.length
+                if(this.ELEMENT_DATA == null)
+                {
+                  this.length = 0
+                }
+                else{
+                  this.length = this.ELEMENT_DATA.length
+                }
               })
             })
             
@@ -162,14 +194,27 @@ sliceIntoChunks(arr: any, chunkSize:any) {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result === true) {
-            this.api.deleteProject(data.id,this.token).subscribe(data => {
-              this.api.getProjects(this.token).subscribe(data => {
-                this.ELEMENT_DATA = data
-                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
-                this.length = this.ELEMENT_DATA.length
-              })
-            })
-            
+            this.api.deleteProject(data.id,this.token).subscribe({
+              next: (data) => {
+                this.api.getProjects(this.token).subscribe({ next: (data) => {
+                  this.ELEMENT_DATA = data
+                  this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
+                  if(this.ELEMENT_DATA == null)
+                  {
+                    this.length = 0
+                  }
+                  else{
+                    this.length = this.ELEMENT_DATA.length
+                  }
+                },
+                error: (error) => {
+
+                }
+                });
+              },
+              error: (error) => {
+              }
+            });
           }
       }
   })
@@ -185,13 +230,72 @@ sliceIntoChunks(arr: any, chunkSize:any) {
               this.api.getProjects(this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);
-                this.length = this.ELEMENT_DATA.length
+                if(this.ELEMENT_DATA == null)
+                {
+                  this.length = 0
+                }
+                else{
+                  this.length = this.ELEMENT_DATA.length
+                }
               })
            // })
             
           }
       }
   })
+  }
+
+
+
+
+  selectedFile: File | null = null;
+
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
+  }
+
+  uploadFile(id: any): void {
+    if (this.selectedFile) {
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      const headers = new HttpHeaders({Authorization: `Bearer ${this.token}`});
+      this.http.post('/api/upload/' + id, formData, { headers }).pipe(
+      ).subscribe({
+        next: () => {
+          this.toastrService.success('File uploaded successfully');
+        },
+        error: () => {
+          this.toastrService.success('Udało się wysłać plik');
+        }
+      });
+    }
+  }
+
+  downloadFile(id: any): void {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.token}`
+    });
+
+    this.http.get('/api/download/' + id, {
+      headers,
+      responseType: 'blob',
+    }).subscribe(
+      (response) => {
+        const downloadLink = document.createElement('a');
+        const blob = new Blob([response], { type: 'application/octet-stream' });
+        const url = window.URL.createObjectURL(blob);
+
+        downloadLink.href = url;
+        downloadLink.download = 'file.txt';
+        downloadLink.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      (error) => {
+        this.toastrService.error("Wystąpił błąd prosze spróbować później")
+      }
+    );
   }
 
 }

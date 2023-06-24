@@ -12,9 +12,9 @@
     
         <div class="navbar-links">
             <ul>
-        <li><a href="/assign" class="btn-request">Przypisz studentów</a></li>
-        <li><a href="/chat" class="btn-request">Chat</a></li>
-        <li><a href="/login" class="btn-request">Wyloguj</a></li>
+        <li><a href="/assign" *ngIf="userRole == 'ADMIN'" class="btn-request">Przypisz studentów</a></li>
+        <li><a href="/chat" *ngIf="isLogin" class="btn-request">Chat</a></li>
+        <li><a href="/login" *ngIf="isLogin" class="btn-request">Wyloguj</a></li>
       </ul>
     </div>
 </div>

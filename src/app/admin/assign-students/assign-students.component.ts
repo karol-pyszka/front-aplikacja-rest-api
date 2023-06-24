@@ -10,23 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-export interface StudentElement {
-  position: number;
-  name: string;
-  surname: string;
-  index: string;
-}
-
-const ELEMENT_DATA: StudentElement[] = [
-  {position: 1, name: 'Jan', surname: 'Niezbędny', index: '1234'},
-  {position: 2, name: 'Adam', surname: 'Zbędny', index: '5352'},
-  {position: 3, name: 'Krzysiu', surname: 'Andrut', index: '2322'},
-  {position: 4, name: 'Lorem', surname: 'xxxx', index: '7454'},
-  {position: 5, name: 'ipsum', surname: 'yyyy', index: '4256'},
-  {position: 6, name: 'set', surname: 'xsdf', index: '2355'},
-  {position: 7, name: 'dolorem', surname: 'sfsf', index: '9864'},
-];
+import { ApiService } from 'src/app/_api/api.service';
+import { CookieService } from 'ngx-cookie-service';
+import { User } from 'src/app/_models/user';
 
 @Component({
   selector: 'app-assign-students',
@@ -53,16 +39,51 @@ export class AssignStudentsComponent implements OnInit {
   projects: any = null;
 
   selectedProjects: number[] = [];
+  token: any;
 
-  constructor(public dialog: MatDialog, private router: Router) {}
+  ELEMENT_DATA: User[] = []
+
+  constructor(public dialog: MatDialog, private router: Router, private api: ApiService, private cookieService: CookieService) {}
 
   ngOnInit(): void {
+    this.token = this.cookieService.get('userToken');
+    if(this.cookieService.check("userToken")){
+      let jwtData = this.cookieService.get("userToken").split('.')[1]
+      let decodedJwtJsonData = window.atob(jwtData)
+      let decodedJwtData = JSON.parse(decodedJwtJsonData)
+     // this.userRole = decodedJwtData.role
+    }
+    this.api.getProjects(this.token).subscribe( project => {
+      this.projects = project
+    });
+
+    this.api.getAllUser(this.token).subscribe(data => {
+      this.ELEMENT_DATA = data
+      this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
+      if(this.ELEMENT_DATA == null)
+      {
+        this.length = 0
+      }
+      else{
+        this.length = this.ELEMENT_DATA.length
+      }
+      
+    })
     this.dataSource.sort = this.sort;
   }
 
+  sliceIntoChunks(arr: any, chunkSize:any) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+}
+
   // paginator var and event
   length = 50;
-  pageSize = 10;
+  pageSize = 5;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25];
 
@@ -76,12 +97,13 @@ export class AssignStudentsComponent implements OnInit {
     this.length = e.length;
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
+    this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, e.pageSize)[e.pageIndex]);
   }
   
-  displayedColumns: string[] = ['position', 'name', 'surname', 'index', 'showTask','edit', 'delete'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  displayedColumns: string[] = [ 'name', 'surname', 'email', 'showTask', 'edit' ,'delete'];
+  dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   selectedProjectName = ''
-  projectDetails!: StudentElement;
+  projectDetails!: User;
 
 
   applyFilter(event: Event) {
@@ -103,7 +125,26 @@ export class AssignStudentsComponent implements OnInit {
       console.log(result)
       if (result !== undefined) {
           if (result === true) {
-            console.log(this.projectDetails)
+            let dataToSend = {
+              firstname: data.firstname,
+              lastname: data.lastname,
+              email: data.email
+            }
+            this.api.editUser(this.token, data.id, dataToSend).subscribe(data => {
+              this.api.getAllUser(this.token).subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
+                if(this.ELEMENT_DATA == null)
+                {
+                  this.length = 0
+                }
+                else{
+                  this.length = this.ELEMENT_DATA.length
+                }
+                
+              })
+            this.dataSource.sort = this.sort;
+            })
           }
       }
   })
@@ -112,15 +153,29 @@ export class AssignStudentsComponent implements OnInit {
   addNewProject(){
     let dialogRef = this.dialog.open(this.addElementDialog);
     this.projectDetails = {
-      position: 1,
-      name: '',
-      surname: '',
-      index: '',
+      firstname: '',
+      lastname: '',
+      email: '',
+      password: ''
     }
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
           if (result === true) {
-            console.log(this.projectDetails)
+            this.api.addUser(this.token, this.projectDetails).subscribe(data => {
+              this.api.getAllUser(this.token).subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
+                if(this.ELEMENT_DATA == null)
+                {
+                  this.length = 0
+                }
+                else{
+                  this.length = this.ELEMENT_DATA.length
+                }
+                
+              })
+            this.dataSource.sort = this.sort;
+            })
           }
       }
   })
@@ -131,16 +186,33 @@ export class AssignStudentsComponent implements OnInit {
     let dialogRef = this.dialog.open(this.deleteElementDialog);
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-          if (result === 'yes') {
-              console.log('User clicked yes.');
-          } else if (result === 'no') {
-              console.log('User clicked no.');
-          }
+        if (result === true) {
+            this.api.deleteUser(this.token, data.id).subscribe( data => {
+              this.api.getAllUser(this.token).subscribe(data => {
+                this.ELEMENT_DATA = data
+                this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, 5)[0]);
+                if(this.ELEMENT_DATA == null)
+                {
+                  this.length = 0
+                }
+                else{
+                  this.length = this.ELEMENT_DATA.length
+                }
+                
+              })
+              this.dataSource.sort = this.sort;
+            });
+        }
       }
   })
   }
 
   openSelectProject(element: any): void {
+    this.api.getProjectForUserById(this.token, element.id).subscribe(data => {
+    let selected: any[] = []
+    data.map((id: { id: any; }) => selected.push(id.id))
+
+    this.selectedProjects = selected;
     const dialogRef = this.dialog.open(this.selectProjectForStudent, {
       width: '250px',
       data: { projects: this.projects }
@@ -149,10 +221,15 @@ export class AssignStudentsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result === true) {
-          console.log(this.selectedProjects)
+          for (var i = 0; i < this.selectedProjects.length; i++) {
+          this.api.assignStudentsToProjectByAdmin(this.token, this.selectedProjects[i], element.id).subscribe(data => {
+            this.selectedProjects = [];
+          });
         }
+      }
     }
     });
+  });
   }
 
 }

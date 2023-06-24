@@ -30,11 +30,12 @@ export class RegisterComponent implements OnInit {
       next: (token) => {
         this.toastr.success("Udało się utworzyć konto");
         this.cookieService.set("userToken", token.token)
-        this.router.navigate(["home"]);
+        this.router.navigate(["home"]).then(() => {
+          window.location.reload();
+        });
       },
       error: (error) => {
         this.toastr.error("Istnieje użytkownik o podanym adresie email!","Błąd");
-        console.log("sss")
       }
     });
   }

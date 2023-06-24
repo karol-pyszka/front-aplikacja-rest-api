@@ -5,6 +5,7 @@ import { FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Valida
 import { Chat } from '../chat/chat'
 import { firebaseConfig } from 'src/environments/environment';
 import * as uuid from 'uuid';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-chat',
@@ -16,13 +17,23 @@ export class ChatComponent implements OnInit {
   app: FirebaseApp;
   db: Database;
   form: FormGroup;
-  username = 'Karol';
+  username = '';
   message = '';
   chats: Chat[] = [];
+  token: any;
+  userRole: any;
 
-  constructor(private formBuilder: FormBuilder, private renderer: Renderer2) {
+  constructor(private formBuilder: FormBuilder, private renderer: Renderer2, private cookieService: CookieService) {
     this.app = initializeApp(firebaseConfig);
     this.db = getDatabase(this.app);
+    this.token = this.cookieService.get('userToken');
+    if(this.cookieService.check("userToken")){
+      let jwtData = this.cookieService.get("userToken").split('.')[1]
+      let decodedJwtJsonData = window.atob(jwtData)
+      let decodedJwtData = JSON.parse(decodedJwtJsonData)
+      this.userRole = decodedJwtData.role
+      this.username = decodedJwtData.sub
+    }
     this.form = this.formBuilder.group({
       'message' : [],
       'username' : [this.username]

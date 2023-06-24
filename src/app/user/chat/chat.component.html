@@ -22,7 +22,7 @@
       </mat-form-field>
     </form>
   
-    <button mat-icon-button class="delete-all-icon" color="warn" (click)="deleteAllChats()">
+    <button mat-icon-button class="delete-all-icon" color="warn" (click)="deleteAllChats()" *ngIf="userRole == 'ADMIN'">
       <mat-icon>delete</mat-icon>
     </button>
   </div>

@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -8,12 +9,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/_api/api.service';
 import { Zadanie } from 'src/app/_models/task';
 
-
-export interface TasksForProject {
-  position: number;
-  name: string;
-  description: string;
-}
 
 @Component({
   selector: 'app-tasks',
@@ -38,7 +33,7 @@ export class TasksComponent implements OnInit {
   projectId: string | null | undefined;
   token: string = ''
 
-  ELEMENT_DATA: TasksForProject[] = [];
+  ELEMENT_DATA: Task[] = [];
 
   constructor(public dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private api: ApiService, private cookieService: CookieService) { }
 
@@ -83,10 +78,10 @@ export class TasksComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, e.pageSize)[e.pageIndex]);
   }
 
-  displayedColumns: string[] = ['name', 'description','edit', 'delete'];
+  displayedColumns: string[] = ['name', 'description','createdAt','endTo','edit', 'delete'];
   dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   selectedTaskName = ''
-  taskDetails!: TasksForProject;
+  taskDetails!: Zadanie;
 
 
   applyFilter(event: Event) {
@@ -111,16 +106,21 @@ export class TasksComponent implements OnInit {
   addNewTask(){
     let dialogRef = this.dialog.open(this.addElementDialog);
     this.taskDetails = {
-      position: 1,
       name: '',
-      description: ''
+      description: '',
+      createdDate: '',
+      endToDate: ''
     }
+    const dataCzasUtworzenia: Date = new Date();
+    const formattedDataCzasUtworzenia: string = formatDate(dataCzasUtworzenia, 'yyyy-MM-dd HH:mm:ss.SSS', 'pl');
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
           if (result === true) {
             let zad: Zadanie = {
-              nazwa: this.taskDetails.name,
-              opis: this.taskDetails.description
+              name: this.taskDetails.name,
+              description: this.taskDetails.description,
+              createdDate: formattedDataCzasUtworzenia,
+              endToDate: formatDate(this.taskDetails.endToDate!, 'yyyy-MM-dd HH:mm:ss.SSS', 'pl')
             }
             this.api.addTaskForProjects(this.projectId,zad, this.token).subscribe(data =>{
               this.api.getTaskForProjects(this.projectId, this.token).subscribe(data => {
@@ -140,7 +140,7 @@ export class TasksComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (result === true) {
-            this.api.deleteTask(data.id, this.token).subscribe(data => {
+            this.api.deleteTask(this.projectId, data.id, this.token).subscribe(data => {
               this.api.getTaskForProjects(this.projectId, this.token).subscribe(data => {
                 this.ELEMENT_DATA = data
                 this.dataSource = new MatTableDataSource(this.sliceIntoChunks(this.ELEMENT_DATA, this.pageSize)[this.pageIndex]);

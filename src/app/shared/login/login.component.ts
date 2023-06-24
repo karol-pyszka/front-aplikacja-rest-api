@@ -27,7 +27,9 @@ export class LoginComponent implements OnInit {
       next: (token) => {
         this.toastr.success("Udało się zalogować");
         this.cookieService.set("userToken", token.token)
-        this.router.navigate(["home"]);
+        this.router.navigate(["home"]).then(() => {
+          window.location.reload();
+        });
       },
       error: (error) => {
         this.toastr.error("Błędny email lub hasło","Błąd");
