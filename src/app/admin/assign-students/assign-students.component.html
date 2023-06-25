@@ -92,6 +92,12 @@
           <input matInput [(ngModel)]="projectDetails.email">
           </mat-form-field>
         </div>
+        <div>
+          <mat-form-field appearance="fill">
+          <mat-label>Hasło</mat-label>
+          <input matInput [(ngModel)]="projectDetails.password">
+          </mat-form-field>
+        </div>
           </div>
           <div mat-dialog-actions>
             <button mat-button mat-dialog-close>Anuluj</button>
@@ -118,6 +124,12 @@
             <mat-form-field appearance="fill">
             <mat-label>Email</mat-label>
             <input matInput [(ngModel)]="projectDetails.email" placeholder="projectDetails.email">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill">
+            <mat-label>Hasło</mat-label>
+            <input matInput [(ngModel)]="projectDetails.password" placeholder="Pozostawione puste nie zmieni hasła">
             </mat-form-field>
           </div>
             </div>

@@ -128,7 +128,8 @@ export class AssignStudentsComponent implements OnInit {
             let dataToSend = {
               firstname: data.firstname,
               lastname: data.lastname,
-              email: data.email
+              email: data.email,
+              password: data.password
             }
             this.api.editUser(this.token, data.id, dataToSend).subscribe(data => {
               this.api.getAllUser(this.token).subscribe(data => {
